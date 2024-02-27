@@ -18,12 +18,16 @@ import {
   import { useEffect, useState } from "react";
   import { Link } from "react-router-dom";
   
-  import { findOneProduct,addCategory,updateCategory} from './TableService'
+  import { findOneProduct,addProduct,updateCategory} from './TableService'
   import * as yup from 'yup'
   import { useParams,useNavigate } from "react-router-dom";
   import 'react-responsive-select/dist/react-responsive-select.css';
   import CategoryDropdown from './CategoryDropdown';
   import SubcategoryDropdown from './SubcategoryDropdown';
+
+  import axios from 'axios';
+  const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const AddProductForm = (props) => {
   const [state, setState] = useState({ date: new Date() });
@@ -42,7 +46,6 @@ const AddProductForm = (props) => {
     
   };
  
-console.log("===",props)
    const findOneData = () => {
     findOneProduct(id).then(({ data }) => {
       setfindOne(data)
@@ -52,60 +55,92 @@ console.log("===",props)
       findOneData()
     }, [])
     const initialValues = {
-      categoryid:'',
-      subcat: '',
+      categoryid:1,
+      subcat: 12,
       projectname:'',
       url:'',
       feature_highlight:'',
+      new:'',
+      featured:'',
+      specification_table:'',
+      fititle:'',
       datasheetno:'',
-      datasheetrevno:''
+      datasheetrevno:'',
+      description:'',
+      wodtitle:'',
+      wbdtitle:'',
+      metatitle:'',
+      metakeyword:'',
+      metakdesc:'',
+      status:'',
+      created_date:new Date()
+
     }
   
 
     const handleSubmit = async (values, { isSubmitting }) => {
         const data = new FormData();
-        console.log("===",values)
-        data.append('parent_id',values.projectname)
-        data.append('parent_cat_id',values.featureImage)
+        //console.log("===",values)
+        data.append('parent_id',values.categoryid)
+        data.append('parent_cat_id',values.subcat)
+        data.append('name',values.projectname)
         data.append('url',values.url)
-        data.append('feature_description',values.feature_description)
-        data.append('new_product',values.new_product)
-        data.append('menu_type',values.menu_type)
-        data.append('feature_product',values.feature_product)
-        data.append('feature_image',values.feature_image)
+        data.append('feature_description',values.feature_highlight)
+        data.append('new_product',values.new)
+        
+        data.append('feature_product',values.featured)
+        data.append('menu_type',values.specification_table)
+        if(values.featureImage)
+        {
+            data.append('featureImage',values.featureImage)
+            data.append('feature_image',values.featureImage.name)
+            data.append('feature_image_name',values.fititle)  
+        }
+        
+        data.append('datasheet_no',values.datasheetno)
+        data.append('ds_rev_no',values.datasheetrevno)
         data.append('description',values.description)
-        data.append('pdf',values.pdf)
-        data.append('meta_title',values.meta_title)
-        data.append('meta_keyword',values.meta_keyword)
-        data.append('meta_description',values.meta_description)
-        data.append('datasheet_no',values.datasheet_no)
-        data.append('feature_image_name',values.feature_image_name)
-        data.append('outline_image',values.outline_image)
-        data.append('outline_image_name',values.outline_image_name)
-        data.append('outline_image1_name',values.outline_image1_name)
-        data.append('outline_image2',values.outline_image2)
-        data.append('outline_image2_name',values.outline_image2_name)
-        data.append('block_img',values.block_img)
-        data.append('block_img_name',values.block_img_name)
-        data.append('block_img1',values.block_img1)
-        data.append('block_img1_name',values.block_img1_name)
-        data.append('block_img2',values.v)
-        data.append('block_img2_name',values.block_img2_name)
-        data.append('tree_level',values.tree_level)
-        data.append('created_date',values.created_date)
-        
-            /* if (id) {
-                updateCategory({id,
-                    ...values,
-                })
-            } else {
-                addCategory({
-                    ...values,
-                })
-            }
-        
-            setState({ parent_id:'',name: '', status: '' });
-            navigate('/subcategory/list');*/
+        if(values.wodimage)
+        {
+            data.append('outline_image',values.wodimage.name)
+            data.append('outlineImage',values.wodimage)
+            data.append('outline_image_name',values.wodtitle)
+        }
+        if(values.wbdimage)
+        {
+            data.append('blockImg',values.wbdimage)
+            data.append('block_img',values.wbdimage.name)
+            data.append('block_img_name',values.wbdtitle)
+        }
+        if(values.datasheetpdf)
+        {
+            data.append('pdfImage',values.datasheetpdf)
+            data.append('pdf',values.datasheetpdf.name)
+        }
+        data.append('meta_title',values.metatitle)
+        data.append('meta_keyword',values.metakeyword)
+        data.append('meta_description',values.metakdesc)
+        data.append('created_date',new Date())
+
+        if (id) {
+            axios.post(`${apiUrl}/product/update/${id}`, data)
+            .then((res) => {
+                this.setState({ product: [res.data] });
+            }).catch((error)=>{
+                console.log('error',error)
+            });
+
+        } else {
+           
+            axios.post(`${apiUrl}/product/add`, data)
+            .then((res) => {
+              this.setState({ product: [res.data] });
+            }).catch((error)=>{
+                console.log('error',error)
+            });
+        }
+
+        //navigate('/product/list');
     }
     
     //console.log("===",findOne)
@@ -247,7 +282,7 @@ console.log("===",props)
                         onChange={(e) =>
                                 setFieldValue(
                                     'featureImage',
-                                    e.target.files
+                                    e.target.files[0]
                                 )
                             }
                        />   
@@ -321,7 +356,7 @@ console.log("===",props)
                         onChange={(e) =>
                                 setFieldValue(
                                     'wodimage',
-                                    e.target.files
+                                    e.target.files[0]
                                 )
                             }
                        />  
@@ -350,7 +385,7 @@ console.log("===",props)
                         onChange={(e) =>
                                 setFieldValue(
                                     'dpdfodimage',
-                                    e.target.files
+                                    e.target.files[0]
                                 )
                             }
                        /> 
@@ -378,7 +413,7 @@ console.log("===",props)
                         onChange={(e) =>
                                 setFieldValue(
                                     'wbdimage',
-                                    e.target.files
+                                    e.target.files[0]
                                 )
                             }
                        />  
@@ -406,7 +441,7 @@ console.log("===",props)
                         onChange={(e) =>
                                 setFieldValue(
                                     'spdfbdimage',
-                                    e.target.files
+                                    e.target.files[0]
                                 )
                             }
                        />   
@@ -453,7 +488,7 @@ console.log("===",props)
                         onChange={(e) =>
                                 setFieldValue(
                                     'otherimage',
-                                    e.target.files
+                                    e.target.files[0]
                                 )
                             }
                        /> 
@@ -481,7 +516,7 @@ console.log("===",props)
                         onChange={(e) =>
                                 setFieldValue(
                                     'datasheetpdf',
-                                    e.target.files
+                                    e.target.files[0]
                                 )
                             }
                        /> 
@@ -525,7 +560,7 @@ console.log("===",props)
                           type="text"
                           name="metakdesc"
                           id="standard-metakdesc"
-                          value={values.metakeyword || ''}
+                          value={values.metakdesc || ''}
                           fullWidth
                           multiline
                           rows={4}
