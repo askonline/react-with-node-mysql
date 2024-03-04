@@ -19,10 +19,10 @@ const SubcategoryDropdown = (props) => {
   
   }, [])
  
- //let categoryId=(findOne.parent_category_id)?findOne.parent_category_id:props.category;
-  
- //console.log("=====",findOne.parent_category_id)
+ const  categoryId=(findOne.parent_id)?findOne.parent_id:props.category;
 
+ //console.log("===",categoryId)
+  
   useEffect(() => {
     if(id)
     {

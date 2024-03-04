@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
         const fileExtension = filename.pop();
         filename = (`${filename.join('-')}-${Date.now()}.${fileExtension}`).toLowerCase();
         //console.log("File NAME IS" + filename)
-        callback(null, filename);
+        callback(null, file.originalname);
     }
 })
 const fileFilterCB = (req, file, callback) => {

@@ -13,11 +13,11 @@ const CategoryDropdown = (props) => {
       setfindOne(data)
     })
     }
-  //console.log("==pp===",props)
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
     props.onCategoryChange(event.target.value);
+    
   };
 
   const getCategoryData = () => {

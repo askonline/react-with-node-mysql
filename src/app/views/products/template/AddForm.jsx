@@ -37,13 +37,14 @@ const AddProductForm = (props) => {
   const [findOne, setfindOne] = useState([])
   
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
   }; 
 
   const handleSubcategoryChange = (subcategory) => {
-    
+    setSelectedSubCategory(subcategory);
   };
  
    const findOneData = () => {
@@ -54,9 +55,15 @@ const AddProductForm = (props) => {
     useEffect(() => {
       findOneData()
     }, [])
+
+    const getCategoryId=(selectedCategory)?selectedCategory:findOne.parent_cat_id;
+    const getSubCategoryId=(selectedCategory)?selectedSubCategory:findOne.parent_id;
+   
+    //console.log(getCategoryId,"==",selectedCategory,"===",selectedSubCategory)
+    
     const initialValues = {
-      categoryid:1,
-      subcat: 12,
+      categoryid:getCategoryId,
+      subcat: getSubCategoryId,
       projectname:'',
       url:'',
       feature_highlight:'',
@@ -72,7 +79,7 @@ const AddProductForm = (props) => {
       metatitle:'',
       metakeyword:'',
       metakdesc:'',
-      status:'',
+     // status:1,
       created_date:new Date()
 
     }
@@ -80,15 +87,18 @@ const AddProductForm = (props) => {
 
     const handleSubmit = async (values, { isSubmitting }) => {
         const data = new FormData();
-        //console.log("===",values)
-        data.append('parent_id',values.categoryid)
-        data.append('parent_cat_id',values.subcat)
+        //console.log(id,"===",values)
+        data.append('parent_id',values.subcat)
+        data.append('parent_cat_id',values.categoryid)
         data.append('name',values.projectname)
         data.append('url',values.url)
         data.append('feature_description',values.feature_highlight)
-        data.append('new_product',values.new)
+       
+        const pNewVal = (values.new == 'on')?"New":"";
+        data.append('new_product',pNewVal)
         
-        data.append('feature_product',values.featured)
+        const pFeaturedVal = (values.featured == 'on')?"Featured":"";
+        data.append('feature_product',pFeaturedVal)
         data.append('menu_type',values.specification_table)
         if(values.featureImage)
         {
@@ -120,6 +130,7 @@ const AddProductForm = (props) => {
         data.append('meta_title',values.metatitle)
         data.append('meta_keyword',values.metakeyword)
         data.append('meta_description',values.metakdesc)
+        data.append('tree_level',1)
         data.append('created_date',new Date())
 
         if (id) {

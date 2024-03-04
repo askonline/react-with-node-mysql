@@ -24,7 +24,7 @@ import {
   import { useParams,useNavigate } from "react-router-dom";
    import 'react-responsive-select/dist/react-responsive-select.css';
   import CategoryDropdown from './CategoryDropdown';
-  import SubcategoryDropdown from './SubcategoryDropdown copy';
+  import SubcategoryDropdown from './SubcategoryDropdown';
   import ProductDropdown from './ProductDropdown';
 
 const AddModelForm = (props) => {
@@ -44,37 +44,6 @@ const AddModelForm = (props) => {
         setVariablelist(data)
       })
       }
-
-    const handleSubmit = async (values, { isSubmitting }) => {
-        console.log("==",values)
-        const formData = new FormData();
-       
-            /* if (id) {
-                updateCategory({id,
-                    ...values,
-                })
-            } else {
-                addCategory({
-                    ...values,
-                })
-            }
-          */
-            navigate('/model/list');
-    }
-
-  
-
-    const initialValues = {
-      products:'',
-      subcategoryid:'',
-      categoryid:'',
-      metakdesc:'',
-      metakeyword:'',
-      metatitle:'',
-      inputtype:'',
-      variable:'',
-      modelno:''
-    }
     let modelno = findOne.model_number;
     //console.log("===",findOne)
 
@@ -85,15 +54,44 @@ const AddModelForm = (props) => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedProducts, setSelectedProducts] = useState("");
   
-  
     const handleCategoryChange = (category) => {
+     
       setSelectedCategory(category);
     }; 
   
     const handleSubcategoryChange = (subcategory) => {
+     
       setSelectedProducts(subcategory)
+  
     };
     
+    const initialValues = {
+      products:'',
+      subcategoryid:selectedProducts,
+      categoryid:selectedCategory,
+      metakdesc:'',
+      metakeyword:'',
+      metatitle:'',
+      inputtype:'',
+      variable:'',
+      modelno:''
+    }
+  const handleSubmit = async (values, { isSubmitting }) => {
+      console.log(props.category,"==",values)
+      const formData = new FormData();
+     
+          /* if (id) {
+              updateCategory({id,
+                  ...values,
+              })
+          } else {
+              addCategory({
+                  ...values,
+              })
+          }
+        */
+          //navigate('/model/list');
+  }
   //console.log(findOne)
     
     return (

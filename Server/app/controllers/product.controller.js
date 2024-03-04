@@ -10,7 +10,7 @@ module.exports.addProduct = async (request, response, next) => {
 
         sql.query("INSERT INTO category_usa SET ?", request.body, (err, res) => {
             if (err) {
-                console.log(err)
+                //console.log(err)
                response.send({err:err,  message: "Product not added!!",status:false });
               return;
             }
@@ -25,11 +25,11 @@ module.exports.addProduct = async (request, response, next) => {
     }
 }
 
-/*
+
 module.exports.updateProduct = async (request, response, next) => {
     try {
         //checkCategory = await Category.findOne({ _id: request.params.id })
-
+        //console.log(request.body)
         sql.query(`select id,parent_id,name,status  from category_usa where id=${request.params.catId}`, (err, res) => {
             if (err) {
                response.send({ err,status:false });
@@ -37,10 +37,7 @@ module.exports.updateProduct = async (request, response, next) => {
             }
             if(res!='')
             {
-                if (!request.body.name) {
-                 response.status(400).send({ message: "Product name content can not be empty",status:false });
-                    return;
-                  }
+               
                 sql.query(`UPDATE category_usa SET ? where id=${request.params.catId}`, request.body, (err, res) => {
                     if (err) {
                        response.send({ err,status:false });
@@ -58,14 +55,16 @@ module.exports.updateProduct = async (request, response, next) => {
     } catch (error) {
         response.status(400).send({ success: false, message: error.message });
     }
-}*/
+}
 //-------------------- Get All Record For Category
 module.exports.findAll = async (request, response, next) => {
     
     try {
         //console.log(Category)
-        let products = sql.query("SELECT * FROM `category_usa` WHERE `tree_level` >= '1' AND `parent_id` != '0' AND `parent_id` != '1' AND `parent_id` != '4' AND `parent_id` != '7' AND `parent_cat_id` != '' ORDER BY `cat_order` ASC", (err, res) => {
+        let products = sql.query("SELECT * FROM `category_usa` WHERE `tree_level` >= '1' AND `parent_id` != '0' AND `parent_id` != '1' AND `parent_id` != '4' AND `parent_id` != '7' AND `parent_cat_id` != '' ORDER BY `id` DESC", 
+            (err, res) => {
                 if (err) throw err;
+               // console.log(res)
                 response.json(res);
             });
         
